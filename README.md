@@ -19,7 +19,9 @@ Due to the limited size of the GitHub, we zip the data. You can download the dat
 ### 2. Install the conda environment.
 
    cd PhaGO/
+   
    conda env create -f phago.yaml -n phago
+   
    conda activate phago
    
 ### 3. Download the database and model.
@@ -34,10 +36,10 @@ Due to the limited size of the GitHub, we zip the data. You can download the dat
 
 #### Step1. Preprocess the contigs and generate the contig sentences.
 
-python preprocess.py 
-                  --contigs inputs contig fasta file
-                  --proteins input the protein fasta file
-                  --sentences input the contig sentences file
+   python preprocess.py 
+                     --contigs inputs contig fasta file
+                     --proteins input the protein fasta file
+                     --sentences input the contig sentences file
                   
 In this step, you have two types of input. First, you can input the contigs and we translate them into proteins. Second, you can directly input the protein fasta file and the contigs sentences file named "test_contig_sentence.csv" and separate each column with a comma.
 
