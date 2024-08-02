@@ -17,6 +17,7 @@ Due to the limited size of the GitHub, we zip the data. You can download the dat
    git clone https://github.com/jiaojiaoguan/PhaGO.git
    
 ### 2. Install the conda environment.
+
    cd PhaGO/
    conda env create -f phago.yaml -n phago
    conda activate phago
