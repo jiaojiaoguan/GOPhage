@@ -1,4 +1,4 @@
-#Overview
+# Overview
 
 PhaGO is a learning-based model, that can be used for annotation of phage proteins based on the Gene ontology terms. The major improvement in PhaGO can be attributed to utilizing the properties of phages and the foundation model. The Transformer model is used to learn the relationship of the genomic context proteins.
 
