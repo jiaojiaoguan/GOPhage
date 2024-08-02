@@ -18,18 +18,18 @@ Due to the limited size of the GitHub, we zip the data. You can download the dat
    
 ### 2. Install the conda environment.
 
-   cd PhaGO/
-   
-   conda env create -f phago.yaml -n phago
-   
-   conda activate phago
+      cd PhaGO/
+      conda env create -f phago.yaml -n phago
+      conda activate phago
    
 ### 3. Download the database and model.
   #### from the Google Drive:
   https://drive.google.com/drive/folders/14IQ75pMW9FK0H4mwleGEAo6_M7vOJeG5?usp=sharing
+  
   #### from Baidu NetDisk(百度网盘):
   链接：https://pan.baidu.com/s/1UafDBBdNyGE4oIf8ZF0Ulg 
   提取码：phag
+  
   Note: You need to put the "Database", "ESM_model", "PhaGO_model", "Protein_annotation" and "Term_label" folders in "PhaGO/".
   
 ### 4. Run PhaGO+ model.
@@ -45,8 +45,8 @@ In this step, you have two types of input. First, you can input the contigs and 
 
 For example, you have two contigs named contig_1 and contig_2. The proteins for contig_1 are p1 and p2, and the proteins for contig_2 are p3. The "test_contig_sentence.csv" is like this:
 
-   contig_1, p1, p2
-   contig_2, p3
+      contig_1, p1, p2
+      contig_2, p3
 
 After inputting the files, the step will do the alignment and output the prediction from DiamondBlastp.
     
