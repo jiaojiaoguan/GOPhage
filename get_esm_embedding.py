@@ -56,8 +56,8 @@ def embedding_proteins_ESM2(plm_model_name):
 
     if plm_model_name=="esm2-12":
 
-        tokenizer = AutoTokenizer.from_pretrained("/home/jiaojguan2/phaGO_0320/esm_model/facebook/esm2_t12_35M_UR50D/")
-        model = EsmModel.from_pretrained("/home/jiaojguan2/phaGO_0320/esm_model/facebook/esm2_t12_35M_UR50D/")
+        tokenizer = AutoTokenizer.from_pretrained("Esm_model/facebook/esm2_t12_35M_UR50D/")
+        model = EsmModel.from_pretrained("Esm_model/facebook/esm2_t12_35M_UR50D/")
         result_path = "esm12_per_residual_embedding/"
         os.makedirs(result_path)
 
@@ -65,8 +65,8 @@ def embedding_proteins_ESM2(plm_model_name):
     elif plm_model_name=="esm2-33":
 
         # esm2-33 model
-        tokenizer = AutoTokenizer.from_pretrained("/home/jiaojguan2/phaGO_0320/esm_model/facebook/esm2_t33_650M_UR50D")
-        model = EsmModel.from_pretrained("/home/jiaojguan2/phaGO_0320/esm_model/facebook/esm2_t33_650M_UR50D")
+        tokenizer = AutoTokenizer.from_pretrained("Esm_model/facebook/esm2_t33_650M_UR50D")
+        model = EsmModel.from_pretrained("Esm_model/facebook/esm2_t33_650M_UR50D")
         result_path = "esm33_per_residual_embedding/"
         os.makedirs(result_path)
 
