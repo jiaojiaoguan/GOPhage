@@ -18,9 +18,9 @@ Due to the limited size of the GitHub, we zip the data. You can download the dat
    
 ### 2. Install the conda environment.
 
-      cd PhaGO/
-      conda env create -f phago.yaml -n phago
-      conda activate phago
+   cd PhaGO/
+   conda env create -f phago.yaml -n phago
+   conda activate phago
    
 ### 3. Download the database and model.
   #### from the Google Drive:
@@ -36,55 +36,55 @@ Due to the limited size of the GitHub, we zip the data. You can download the dat
 
 #### Step1. Preprocess the contigs and generate the contig sentences.
 
-      python preprocess.py 
-                        --contigs inputs contig fasta file
-                        --proteins input the protein fasta file
-                        --sentences input the contig sentences file
+   python preprocess.py 
+                     --contigs inputs contig fasta file
+                     --proteins input the protein fasta file
+                     --sentences input the contig sentences file
                      
 In this step, you have two types of input. First, you can input the contigs and we translate them into proteins. Second, you can directly input the protein fasta file and the contigs sentences file named "test_contig_sentence.csv" and separate each column with a comma.
 
 For example, you have two contigs named contig_1 and contig_2. The proteins for contig_1 are p1 and p2, and the proteins for contig_2 are p3. The "test_contig_sentence.csv" is like this:
 
-      contig_1, p1, p2
-      contig_2, p3
+   contig_1, p1, p2
+   contig_2, p3
 
 After inputting the files, the step will do the alignment and output the prediction from DiamondBlastp.
     
 ##### Example.
 
-    python preprocess.py --contigs test.fasta
-    or 
-    python preprocess.py --proteins test_proteins.fasta --sentences test_contig_sentence.csv
+   python preprocess.py --contigs test.fasta
+   or 
+   python preprocess.py --proteins test_proteins.fasta --sentences test_contig_sentence.csv
     
 #### Step2. Generate the protein embedding using ESM2.
 
-    python get_esm_embedding.py 
-                     --plm The name of PLM model (esm2-12 or esm2-33)
+   python get_esm_embedding.py 
+                  --plm The name of PLM model (esm2-12 or esm2-33)
                      
 #### Example.
 
-    python get_esm_embedding.py --plm esm2-12 
+   python get_esm_embedding.py --plm esm2-12 
 
     
 #### Step3. Preparing the input files for PhaGO model including the protein names and the sequence embedding.
 
-    python prepare_PhaGO_input.py 
-                    --plm The name of PLM model (esm2-12 or esm2-33)
+   python prepare_PhaGO_input.py 
+                 --plm The name of PLM model (esm2-12 or esm2-33)
                     
 #### Example.
 
-    python prepare_PhaGO_input.py --plm esm2-12
+   python prepare_PhaGO_input.py --plm esm2-12
   
 #### Step4. Run PhaGO model and output the final prediction combined with DiamondScore.
 
-      python PhaGO.py 
-                       --plm The name of PLM model (esm2-12 or esm2-33)
-                       --ont The ontology including BP, CC and MF
-                       --batch_size The batch size for the input
-                       --cutoff  Set the cutoff for output the prediction score. 
+   python PhaGO.py 
+                    --plm The name of PLM model (esm2-12 or esm2-33)
+                    --ont The ontology including BP, CC and MF
+                    --batch_size The batch size for the input
+                    --cutoff  Set the cutoff for output the prediction score. 
                     
 #### Example.
-        python PhaGO.py --plm esm2-12 --ont BP --cutoff 0.2
+   python PhaGO.py --plm esm2-12 --ont BP --cutoff 0.2
 
 ### Output
 
