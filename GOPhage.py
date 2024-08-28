@@ -191,12 +191,12 @@ def output_the_prediction_results(plm_model_name, ont,cutoff):
     if plm_model_name=="esm2-12":
 
         phagoplus_prediction_results = "./" + ont + "_phago_base_plus_predictions.pkl"
-        file1 = open(ont + "_phago_base_plus_prediction_labels.csv", "w")
+        file1 = open(ont + "_GOPhage_base_plus_prediction_labels.csv", "w")
 
     elif plm_model_name=="esm2-33":
 
         phagoplus_prediction_results = "./" + ont + "_phago_large_plus_predictions.pkl"
-        file1 = open(ont + "_phago_large_plus_prediction_labels.csv", "w")
+        file1 = open(ont + "_GOPhage_large_plus_prediction_labels.csv", "w")
     else:
         print("Error, please the correct plm model name!")
         exit(0)
