@@ -1,28 +1,28 @@
 
-![icon](https://github.com/jiaojiaoguan/PhaGO/blob/main/gophage.png)
+![icon](https://github.com/jiaojiaoguan/GOPhage/blob/main/gophage.png)
 # Overview
 
-PhaGO is a learning-based model, that can be used for annotation of phage proteins based on the Gene ontology terms. The major improvement in PhaGO can be attributed to utilizing the properties of phages and the foundation model. The Transformer model is used to learn the relationship of the genomic context proteins.
+GOPhage is a learning-based model, that can be used for annotation of phage proteins based on the Gene ontology terms. The major improvement in GOPhage can be attributed to utilizing the properties of phages and the foundation model. The Transformer model is used to learn the relationship of the genomic context proteins.
 
-In addition, we integrate PhaGO with the DiamondBlastp to further improve the performance. You can choose to run PhaGO+ which has two versions based on the ESM2-12 and ESM2-33.
+In addition, we integrate GOPhage with the DiamondBlastp to further improve the performance. You can choose to run GOPhage+ which has two versions based on the ESM2-12 and ESM2-33.
 
 ## Quick install
 Note: we suggest you install all the packages using Conda (both Miniconda and Anaconda are ok).
 
-After cloning this repository, you can use Anaconda to install the ‘phago.yaml’. This will install all packages you need with GPU mode (make sure you have installed Cuda on your system to use the GPU version).
+After cloning this repository, you can use Anaconda to install the ‘GOPhage.yaml’. This will install all packages you need with GPU mode (make sure you have installed Cuda on your system to use the GPU version).
 
 
 ## Prepare the data and environment
-Due to the limited size of the GitHub, we zip the data. You can download the database and model from Google Drive or Baidu Netdisk(百度网盘). You can follow the steps below to use PhaGO.
+Due to the limited size of the GitHub, we zip the data. You can download the database and model from Google Drive or Baidu Netdisk(百度网盘). You can follow the steps below to use GOPhage.
 
 ### 1. Download the code.
-      git clone https://github.com/jiaojiaoguan/PhaGO.git
+      git clone https://github.com/jiaojiaoguan/GOPhage.git
    
 ### 2. Install the conda environment.
 
-      cd PhaGO/
-      conda env create -f phago.yaml -n phago
-      conda activate phago
+      cd GOPhage/
+      conda env create -f GOPhage.yaml -n GOPhage
+      conda activate GOPhage
    
 ### 3. Download the database and model.
   #### from the Google Drive:
@@ -32,9 +32,9 @@ Due to the limited size of the GitHub, we zip the data. You can download the dat
   链接：https://pan.baidu.com/s/1UafDBBdNyGE4oIf8ZF0Ulg 
   提取码：phag
   
-  Note: You need to put the "Database", "ESM_model", "PhaGO_model", "Protein_annotation" and "Term_label" folders in "PhaGO/".
+  Note: You need to put the "Database", "ESM_model", "GOPhage_model", "Protein_annotation" and "Term_label" folders in "GOPhage/".
   
-### 4. Run PhaGO+ model.
+### 4. Run GOPhage+ model.
 
 #### Step1. Preprocess the contigs and generate the contig sentences.
 
@@ -68,30 +68,30 @@ After inputting the files, the step will do the alignment and output the predict
       python get_esm_embedding.py --plm esm2-12 
 
     
-#### Step3. Preparing the input files for PhaGO model including the protein names and the sequence embedding.
+#### Step3. Preparing the input files for GOPhage model including the protein names and the sequence embedding.
 
-      python prepare_PhaGO_input.py 
+      python prepare_GOPhage_input.py 
                     --plm The name of PLM model (esm2-12 or esm2-33)
                     
 #### Example.
 
-      python prepare_PhaGO_input.py --plm esm2-12
+      python prepare_GOPhage_input.py --plm esm2-12
   
-#### Step4. Run PhaGO model and output the final prediction combined with DiamondScore.
+#### Step4. Run GOPhage model and output the final prediction combined with DiamondScore.
 
-      python PhaGO.py 
+      python GOPhage.py 
                        --plm The name of PLM model (esm2-12 or esm2-33)
                        --ont The ontology including BP, CC and MF
                        --batch_size The batch size for the input
                        --cutoff  Set the cutoff for output the prediction score. 
                     
 #### Example.
-      python PhaGO.py --plm esm2-12 --ont BP --cutoff 0.2
+      python GOPhage.py --plm esm2-12 --ont BP --cutoff 0.2
 
 ### Output
 
-If you use the esm2-12 model, the prediction will be written in BP_phago_base_plus_prediction_labels.csv.
-If you use the esm2-33 model, the prediction will be written in BP_phago_large_plus_prediction_labels.csv.
+If you use the esm2-12 model, the prediction will be written in BP_GOPhage_base_plus_prediction_labels.csv.
+If you use the esm2-33 model, the prediction will be written in BP_GOPhage_large_plus_prediction_labels.csv.
 The CSV file has three columns: Proteins, GO term, and score.
    
 
