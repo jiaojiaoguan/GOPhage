@@ -21,8 +21,8 @@ Due to the limited size of the GitHub, we zip the data. You can download the dat
 ### 2. Install the conda environment.
 
       cd GOPhage/
-      conda env create -f GOPhage.yaml -n GOPhage
-      conda activate GOPhage
+      conda env create -f gophage.yaml -n gophage
+      conda activate gophage
    
 ### 3. Download the database and model.
   #### from the Google Drive:
@@ -70,12 +70,12 @@ After inputting the files, the step will do the alignment and output the predict
     
 #### Step3. Preparing the input files for GOPhage model including the protein names and the sequence embedding.
 
-      python prepare_GOPhage_input.py 
+      python prepare_gophage_input.py 
                     --plm The name of PLM model (esm2-12 or esm2-33)
                     
 #### Example.
 
-      python prepare_GOPhage_input.py --plm esm2-12
+      python prepare_gophage_input.py --plm esm2-12
   
 #### Step4. Run GOPhage model and output the final prediction combined with DiamondScore.
 
