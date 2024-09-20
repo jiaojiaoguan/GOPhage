@@ -185,18 +185,23 @@ def combine_diamondblasp_phaGO(plm_model_name,ont):
 
     df.to_pickle(output_results, protocol=4)
 
-def output_the_prediction_results(plm_model_name, ont,cutoff):
+def output_the_prediction_results(plm_model_name, ont):
     #load the phago plus results
+    # get cutoff for each go term
 
     if plm_model_name=="esm2-12":
 
         phagoplus_prediction_results = "./" + ont + "_phago_base_plus_predictions.pkl"
         file1 = open(ont + "_GOPhage_base_plus_prediction_labels.csv", "w")
+        file2=open("./PhaGO_model/esm12_"+ont+"_label_threshold.csv")
+        next(file2)
 
     elif plm_model_name=="esm2-33":
 
         phagoplus_prediction_results = "./" + ont + "_phago_large_plus_predictions.pkl"
         file1 = open(ont + "_GOPhage_large_plus_prediction_labels.csv", "w")
+        file2 = open("./PhaGO_model/esm33_" + ont + "_label_threshold.csv")
+        next(file2)
     else:
         print("Error, please the correct plm model name!")
         exit(0)
@@ -215,6 +220,13 @@ def output_the_prediction_results(plm_model_name, ont,cutoff):
     terms = terms_df['terms'].values.flatten()
     terms_dict = {i: v for i, v in enumerate(terms)}
 
+    dict_label_threshold={}
+    for lines in file2:
+        line = lines.strip().split(",")
+        dict_label_threshold[line[0]]=float(line[1])
+
+
+
 
     file1.write("Proteins,GO Term,Scores\n")
 
@@ -222,6 +234,7 @@ def output_the_prediction_results(plm_model_name, ont,cutoff):
         p= phago_plus_protein[j]
         for indice, score in enumerate( phago_plus_preds[j]):
             go_term = terms_dict[indice]
+            cutoff= dict_label_threshold[go_term]
             if score>cutoff:
                 file1.write(p+","+go_term+","+str(score)+"\n")
     file1.close()
@@ -236,7 +249,6 @@ if __name__ == '__main__':
     parser.add_argument('--plm', help='name of PLM model (esm2-12 or esm2-33)', type=str, default='esm2-33')
     parser.add_argument('--ont', help='The ontology including BP, CC and MF', type=str, default='CC')
     parser.add_argument('--batch_size', help="batch size", type=int, default=2)
-    parser.add_argument('--cutoff', help="only output the GO labes above the the cutoff", type=float, default=0.2)
 
 
     inputs = parser.parse_args()
@@ -244,11 +256,9 @@ if __name__ == '__main__':
     plm_model = inputs.plm
     ont = inputs.ont
     batch_size = inputs.batch_size
-    cutoff = inputs.cutoff
+
 
     # call the function
     run_phaGO_model(plm_model_name=plm_model,ont=ont,batch_size= batch_size)
     combine_diamondblasp_phaGO(plm_model_name=plm_model,ont=ont)
-    output_the_prediction_results(ont=ont,cutoff=cutoff,plm_model_name=plm_model)
-
-
+    output_the_prediction_results(ont=ont,plm_model_name=plm_model)
