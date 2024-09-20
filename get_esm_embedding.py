@@ -56,19 +56,21 @@ def embedding_proteins_ESM2(plm_model_name):
 
     if plm_model_name=="esm2-12":
 
-        tokenizer = AutoTokenizer.from_pretrained("Esm_model/facebook/esm2_t12_35M_UR50D/")
-        model = EsmModel.from_pretrained("Esm_model/facebook/esm2_t12_35M_UR50D/")
+        tokenizer = AutoTokenizer.from_pretrained("ESM_model/facebook/esm2_t12_35M_UR50D/")
+        model = EsmModel.from_pretrained("ESM_model/facebook/esm2_t12_35M_UR50D/")
         result_path = "esm12_per_residual_embedding/"
-        os.makedirs(result_path)
+        if not os.path.exists(result_path):
+            os.makedirs(result_path)
 
 
     elif plm_model_name=="esm2-33":
 
         # esm2-33 model
-        tokenizer = AutoTokenizer.from_pretrained("Esm_model/facebook/esm2_t33_650M_UR50D")
-        model = EsmModel.from_pretrained("Esm_model/facebook/esm2_t33_650M_UR50D")
+        tokenizer = AutoTokenizer.from_pretrained("ESM_model/facebook/esm2_t33_650M_UR50D")
+        model = EsmModel.from_pretrained("ESM_model/facebook/esm2_t33_650M_UR50D")
         result_path = "esm33_per_residual_embedding/"
-        os.makedirs(result_path)
+        if not os.path.exists(result_path):
+            os.makedirs(result_path)
 
     else:
         print("There is an error in your input model name!")
