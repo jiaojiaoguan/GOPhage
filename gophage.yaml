@@ -215,7 +215,6 @@ dependencies:
       - charset-normalizer==3.3.0
       - click==8.1.7
       - cmake==3.27.7
-      - dgl==1.1.2+cu117
       - einops==0.7.0
       - fair-esm==2.0.0
       - filelock==3.12.4
