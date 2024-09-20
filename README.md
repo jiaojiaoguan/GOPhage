@@ -83,10 +83,9 @@ After inputting the files, the step will do the alignment and output the predict
                        --plm The name of PLM model (esm2-12 or esm2-33)
                        --ont The ontology including BP, CC and MF
                        --batch_size The batch size for the input
-                       --cutoff  Set the cutoff for output the prediction score. 
                     
 #### Example.
-      python GOPhage.py --plm esm2-12 --ont BP --cutoff 0.2
+      python GOPhage.py --plm esm2-12 --ont BP
 
 ### Output
 
