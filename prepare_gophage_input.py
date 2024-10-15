@@ -4,7 +4,7 @@ import os
 import shutil
 import torch
 
-def preparing_context_protein_embedding(plm_model_name):
+def preparing_context_protein_embedding(plm_model_name,contig_sentence):
 
     # intergating the proteins in the same contigs
     print("intergating the proteins embedding in the same contigs ...")
@@ -33,7 +33,7 @@ def preparing_context_protein_embedding(plm_model_name):
 
 
     # read the contig sentence
-    file1 = open("test_contig_sentence.csv")
+    file1 = open(contig_sentence)
     for lines in file1:
         line = lines.strip().split(",")
         sequence_name=line[0]
@@ -59,7 +59,7 @@ def preparing_context_protein_embedding(plm_model_name):
 
             torch.save({"data": sequence_embedding}, file_path)
 
-def get_protein_names():
+def get_protein_names(contig_sentence):
     print("Preparing the protein names ...")
 
 
@@ -69,7 +69,7 @@ def get_protein_names():
 
     os.makedirs(protein_name_path)
 
-    file1 = open("test_contig_sentence.csv")
+    file1 = open(contig_sentence)
     for lines in file1:
         line = lines.strip().split(",")
         sequence_name = line[0]
@@ -84,23 +84,23 @@ def get_protein_names():
 
     print("get sequence protein names successfully!")
 
-def get_sequence_location(model_name):
+def get_sequence_location(model_name,contig_sentence):
     print("preparing the location of the embedding and protein names ...")
 
     if model_name=="esm2-12":
         sequence_embedding_path="sequence_embedding_esm12/"
         protein_embedding_path = "esm12_per_residual_embedding/"
-        file2 = open("test_location_esm12.csv", "w")
+        file2 = open("results/test_location_esm12.csv", "w")
 
     elif model_name == "esm2-33":
         sequence_embedding_path = "sequence_embedding_esm33/"
         protein_embedding_path = "esm33_per_residual_embedding/"
-        file2 = open("test_location_esm33.csv", "w")
+        file2 = open("results/test_location_esm33.csv", "w")
     else:
         print("Error: the model name is not correct!")
         exit(0)
 
-    file1 = open("test_contig_sentence.csv")
+    file1 = open(contig_sentence)
 
 
 
@@ -127,16 +127,3 @@ def get_sequence_location(model_name):
             file_path_embedding + "," + file_path_protein_name +  "\n")
 
     file2.close()
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description="""Run esm model to get the protein embedding""")
-
-    parser.add_argument('--plm', help='name of PLM model (esm2-12 or esm2-33)', type=str, default='esm2-12')
-    inputs = parser.parse_args()
-    plm_model = inputs.plm
-
-    preparing_context_protein_embedding(plm_model_name= plm_model)
-    get_protein_names()
-    get_sequence_location(model_name=plm_model)
