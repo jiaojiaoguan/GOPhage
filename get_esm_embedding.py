@@ -81,6 +81,7 @@ def embedding_proteins_ESM2(plm_model_name):
         model = nn.DataParallel(model)
 
     model.to(device)
+    model.eval()
 
 
     with torch.no_grad():
