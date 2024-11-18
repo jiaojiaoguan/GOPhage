@@ -9,7 +9,6 @@ import pickle
 import torch
 from model import PhaGO_model
 import argparse
-import argparse
 import subprocess
 from Bio import SeqIO
 from get_esm_embedding import embedding_proteins_ESM2
