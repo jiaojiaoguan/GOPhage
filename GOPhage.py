@@ -184,7 +184,7 @@ def get_diamondscore(ont,protein_fasta):
         all_test_blast_preds_score.append(pre_score)
 
     test_results = {}
-    test_results["diamondblastp_prediction"] = list(all_test_blast_preds_score)
+    test_results["prediction"] = list(all_test_blast_preds_score)
     test_results["protein_name"] = test_protein_names
 
     with open("results/" + ont + '_test_diamondblastp_results.pkl', 'wb') as handle:
@@ -292,12 +292,12 @@ def combine_diamondblasp_phaGO(plm_model_name,ont):
 
     if plm_model_name=="esm2-12":
         dict_onyology_alpha = { "BP": 1.0, "CC": 0.83,"MF": 0.91}
-        output_results = "results//"+ont+ "_phago_base_plus_predictions.pkl"
+        output_results = "results//"+ont+ "_phago_base_plus_results.pkl"
         phago_prediction_results = "results//" + ont + '_phago_base_results.pkl'
 
     elif plm_model_name=="esm2-33":
         dict_onyology_alpha = {"BP": 0.9, "CC": 0.62, "MF": 0.82}
-        output_results = "results//"+ont+ "_phago_large_plus_predictions.pkl"
+        output_results = "results//"+ont+ "_phago_large_plus_results.pkl"
         phago_prediction_results = "results/" + ont + '_phago_large_results.pkl'
     else:
         print("Error, please the correct plm model name!")
@@ -308,7 +308,7 @@ def combine_diamondblasp_phaGO(plm_model_name,ont):
     # diamond_score_prediction_results.
     diamond_blastp_result_file = "results//" + ont + '_test_diamondblastp_results.pkl'
     test_df = pd.read_pickle(diamond_blastp_result_file)
-    diamond_blastp_preds = test_df["diamondblastp_prediction"]
+    diamond_blastp_preds = test_df["prediction"]
     diamond_protein_name = test_df["protein_name"]
 
     #load the phago prediction results.
@@ -369,14 +369,14 @@ def output_the_prediction_results(plm_model_name, ont):
 
     if plm_model_name=="esm2-12":
 
-        phagoplus_prediction_results = "results//" + ont + "_phago_base_plus_predictions.pkl"
+        phagoplus_prediction_results = "results//" + ont + "_phago_base_plus_results.pkl"
         file1 = open("results/"+ont + "_GOPhage_base_plus_prediction_labels.csv", "w")
         file2=open("./PhaGO_model/esm12_"+ont+"_label_threshold.csv")
         next(file2)
 
     elif plm_model_name=="esm2-33":
 
-        phagoplus_prediction_results = "results//" + ont + "_phago_large_plus_predictions.pkl"
+        phagoplus_prediction_results = "results//" + ont + "_phago_large_plus_results.pkl"
         file1 = open("results/"+ont + "_GOPhage_large_plus_prediction_labels.csv", "w")
         file2 = open("./PhaGO_model/esm33_" + ont + "_label_threshold.csv")
         next(file2)
@@ -388,8 +388,8 @@ def output_the_prediction_results(plm_model_name, ont):
 
 
     test_df = pd.read_pickle(phagoplus_prediction_results)
-    phago_plus_preds = test_df["preds"]
-    phago_plus_protein = test_df["proteins"]
+    phago_plus_preds = test_df["prediction"]
+    phago_plus_protein = test_df["protein_name"]
 
 
     terms_file = "./Term_label/" + ont + '_term.pkl'
