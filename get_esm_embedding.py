@@ -4,7 +4,6 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 from Bio import SeqIO
 from transformers import AutoTokenizer, EsmModel
-
 import os
 
 
@@ -41,10 +40,10 @@ def get_loader(fasta_file,
         num_workers=num_workers)
     return loader
 
-def embedding_proteins_ESM2(plm_model_name):
+def embedding_proteins_ESM2(plm_model_name,mid_dir):
     print("Preparing the data for PhaGO model ...")
     print("Embedding the protein sequence using ESM2 "+ plm_model_name +" ...")
-    fasta_file = "test_protein.fa"
+    fasta_file = f"{mid_dir}/test_protein.fa"
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -97,14 +96,3 @@ def embedding_proteins_ESM2(plm_model_name):
             file_path_embedding = result_path + name + "_embedding.pkl"
 
             torch.save({'data': last_hidden_states}, file_path_embedding)
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description="""Run esm model to get the protein embedding""")
-
-    parser.add_argument('--plm', help='name of PLM model (esm2-12 or esm2-33)', type=str, default='esm2-12')
-
-    inputs = parser.parse_args()
-    plm_model = inputs.plm
-
-    embedding_proteins_ESM2(plm_model_name=plm_model)
