@@ -84,18 +84,18 @@ def get_protein_names(contig_sentence):
 
     print("get sequence protein names successfully!")
 
-def get_sequence_location(model_name,contig_sentence):
+def get_sequence_location(model_name,contig_sentence,mid_dir):
     print("preparing the location of the embedding and protein names ...")
 
     if model_name=="esm2-12":
         sequence_embedding_path="sequence_embedding_esm12/"
         protein_embedding_path = "esm12_per_residual_embedding/"
-        file2 = open("results/test_location_esm12.csv", "w")
+        file2 = open(f"{mid_dir}/test_location_esm12.csv", "w")
 
     elif model_name == "esm2-33":
         sequence_embedding_path = "sequence_embedding_esm33/"
         protein_embedding_path = "esm33_per_residual_embedding/"
-        file2 = open("results/test_location_esm33.csv", "w")
+        file2 = open(f"{mid_dir}/test_location_esm33.csv", "w")
     else:
         print("Error: the model name is not correct!")
         exit(0)
