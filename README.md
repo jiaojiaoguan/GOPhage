@@ -37,21 +37,21 @@ Due to the limited size of the GitHub, we zip the data. You can download the dat
 ### 4. Run GOPhage+ model.
       python GOPhage.py 
                   --contigs [DNA FASTA file of contigs, you can only input contigs and ignore the --proteins and --sentences]
-                  --proteins [FASTA file of proteins, if you input the proteins, you also need to tell the proteins sentences]
-                  --sentences [The contigs sentence including the ordered proteins. Please separate each column with a comma.]
-                 --plm The name of PLM model (esm2-12 or esm2-33)
-                 --ont The ontology including BP, CC, and MF
-                 --batch_size The batch size for the input
+                  --plm [The name of PLM model (esm2-12 or esm2-33)]
+                  --ont [The ontology including BP, CC, and MF]
+                  --batch_size [The batch size for the input]
+                  --mid_dir [The directory for saved results]
+                  --threshold [The GO that satisfies the threshold will be output. default: 0.1]
                     
 #### Example.
-      python GOPhage.py --proteins test_proteins.fasta --sentences contig_sentence.csv --ont CC --plm esm2-33
+      python GOPhage.py --contigs test_conitg.fasta --ont BP --plm esm2-12 --mid_dir BP_results
 
 
 ### Output
 
-If you use the esm2-12 model, the prediction will be written in BP_GOPhage_base_plus_prediction_labels.csv.
-If you use the esm2-33 model, the prediction will be written in BP_GOPhage_large_plus_prediction_labels.csv.
-The CSV file has three columns: Proteins, GO term, and score.
+If you use the esm2-12 model, the prediction will be written in BP_GOPhage_base_plus_prediction_labels_summary.csv.
+If you use the esm2-33 model, the prediction will be written in BP_GOPhage_large_plus_prediction_labels_summary.csv.
+The CSV file has two columns: Proteins, GO term
    
 
 ### Contact 
