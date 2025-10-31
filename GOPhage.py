@@ -533,7 +533,7 @@ if __name__ == '__main__':
     parser.add_argument('--ont', help='The ontology including BP, CC and MF', type=str, default='CC')
     parser.add_argument('--batch_size', help="batch size", type=int, default=8)
     parser.add_argument('--mid_dir', help="The directory for saved results", type=str, default="CC_results")
-    parser.add_argument('--threshold', help="The GO statisfy the threshold will be output", type=float, default=0.1)
+    parser.add_argument('--threshold', help="The GO that satisfy the threshold will be output", type=float, default=0.1)
 
 
     inputs = parser.parse_args()
@@ -587,3 +587,4 @@ if __name__ == '__main__':
     end_time = time.time()
     spend_time = (end_time - start_time)/60
     print(f"Running time: {spend_time:.2f} min")
+
