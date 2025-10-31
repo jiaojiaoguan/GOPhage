@@ -29,10 +29,9 @@ Due to the limited size of the GitHub, we zip the data. You can download the dat
   https://drive.google.com/drive/folders/14IQ75pMW9FK0H4mwleGEAo6_M7vOJeG5?usp=sharing
   
   #### from Baidu NetDisk(百度网盘):
-  链接：https://pan.baidu.com/s/1UafDBBdNyGE4oIf8ZF0Ulg 
-  提取码：phag
+  链接: https://pan.baidu.com/s/1vzT4FeaCfNyilffra5dagg?pwd=phag 提取码: phag 
   
-  Note: You need to put the "Database", "ESM_model", "GOPhage_model", "Protein_annotation" and "Term_label" folders in "GOPhage/".
+  Note: You need to put the "Database", "ESM_model", "GOPhage_model", "Protein_annotation", and "Term_label" folders in "GOPhage/".
   
 ### 4. Run GOPhage+ model.
       python GOPhage.py 
