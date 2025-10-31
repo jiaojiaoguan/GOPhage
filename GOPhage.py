@@ -15,11 +15,11 @@ from get_esm_embedding import embedding_proteins_ESM2
 from prepare_gophage_input import preparing_context_protein_embedding, get_protein_names, get_sequence_location
 import os
 import time
+import csv
+from collections import defaultdict, deque
 
-def translate_contigs_into_proteins(input_fasta):
-    # Prodigal translation
-    output_protein= input_fasta.split(".")[0]
-    output_protein= output_protein+".fa"
+def translate_contigs_into_proteins(input_fasta,output_protein,mid_dir):
+
 
     prodigal_cmd = f'prodigal -i {input_fasta} -a {output_protein} -f gff -p meta'
     print(f"Running prodigal ...")
@@ -29,7 +29,7 @@ def translate_contigs_into_proteins(input_fasta):
 
     # get the contig sequence file
 
-    contig_sentence = "results/test_contig_sentence.csv"
+    contig_sentence = f"{mid_dir}/test_contig_sentence.csv"
     file1 = open(contig_sentence, "w")
     dict_contig_proteins = {}
 
@@ -55,12 +55,14 @@ def translate_contigs_into_proteins(input_fasta):
     return output_protein, contig_sentence
 
 
-def check_number_protein(contig_sentence,ont):
+def check_number_protein(contig_sentence,ont,mid_dir):
 
     dict_ontology_length = {"CC": 55, "BP": 17, "MF": 59}
     max_length = dict_ontology_length[ont]
     fiel1 = open(contig_sentence)
-    new_contig_sentence_name = "results/new_" + ont + "_" + contig_sentence
+
+    new_contig_sentence_name = f"{mid_dir}/test_contig_sentence_new.csv"
+
 
     file2 = open(new_contig_sentence_name, "w")
     for lines in fiel1:
@@ -90,10 +92,10 @@ def check_number_protein(contig_sentence,ont):
 
     return new_contig_sentence_name
 
-def run_diamond_blatp_alignment(input_protein_fasta,ont):
-    database = f"./DataBase/{ont}_database"
+def run_diamond_blatp_alignment(input_protein_fasta,ont,mid_dir):
+    database = f"./DataBase/{ont}_database.dmnd"
 
-    cmd1 = "diamond blastp -d " + database + " -q " + input_protein_fasta + " -o results/test_against_"+ont+"_database.txt" + " -p 8 --sensitive "
+    cmd1 = "diamond blastp -d " + database + " -q " + input_protein_fasta + f" -o {mid_dir}/test_against_"+ont+"_database.txt" + " -p 8 --sensitive "
 
 
     print(f"Running Diamond Blastp with database")
@@ -108,7 +110,7 @@ def read_test_protein(protein_fasta):
     return test_protein_names
 
 
-def get_diamondscore(ont,protein_fasta):
+def get_diamondscore(ont,protein_fasta,mid_dir):
     print("Runing the DiamondBlastp method to get the preiction score ...")
     n_terms = {"BP": 126, "MF": 165, "CC": 23}
     number = n_terms[ont]
@@ -128,7 +130,7 @@ def get_diamondscore(ont,protein_fasta):
         dict_train_protein_go[train_protein] = final_label
 
     diamond_scores = {}
-    input_diamond_file = f"results/test_against_{ont}_database.txt"
+    input_diamond_file = f"{mid_dir}/test_against_{ont}_database.txt"
     with open(input_diamond_file) as f:
         for line in f:
             it = line.strip().split("\t")
@@ -187,11 +189,11 @@ def get_diamondscore(ont,protein_fasta):
     test_results["prediction"] = list(all_test_blast_preds_score)
     test_results["protein_name"] = test_protein_names
 
-    with open("results/" + ont + '_test_diamondblastp_results.pkl', 'wb') as handle:
+    with open(f"{mid_dir}/" + ont + '_test_diamondblastp_results.pkl', 'wb') as handle:
         pickle.dump(test_results, handle)
 
 
-def run_phaGO_model(plm_model_name,ont,batch_size):
+def run_phaGO_model(plm_model_name,ont,batch_size,mid_dir):
 
     if plm_model_name== "esm2-12":
         nhead = 12
@@ -203,8 +205,8 @@ def run_phaGO_model(plm_model_name,ont,batch_size):
             dim_feedforward = 480
 
         model_name = "./PhaGO_model/"+ont+"_PhaGO_base_model.th"
-        out_put_file= "results/" + ont + '_phago_base_results.pkl'
-        data_file_input = f"results/test_location_esm12.csv"
+        out_put_file= f"{mid_dir}/" + ont + '_phago_base_results.pkl'
+        data_file_input = f"{mid_dir}/test_location_esm12.csv"
 
     elif plm_model_name=="esm2-33":
         nhead = 16
@@ -215,8 +217,8 @@ def run_phaGO_model(plm_model_name,ont,batch_size):
             dim_feedforward = 1280
 
         model_name = "./PhaGO_model/" + ont + "_PhaGO_large_model.th"
-        out_put_file = "results//" + ont + '_phago_large_results.pkl'
-        data_file_input = "results/test_location_esm33.csv"
+        out_put_file = f"{mid_dir}/" + ont + '_phago_large_results.pkl'
+        data_file_input = f"{mid_dir}/test_location_esm33.csv"
 
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -292,13 +294,13 @@ def combine_diamondblasp_phaGO(plm_model_name,ont):
 
     if plm_model_name=="esm2-12":
         dict_onyology_alpha = { "BP": 1.0, "CC": 0.83,"MF": 0.91}
-        output_results = "results//"+ont+ "_phago_base_plus_results.pkl"
-        phago_prediction_results = "results//" + ont + '_phago_base_results.pkl'
+        output_results = f"{mid_dir}/"+ont+ "_phago_base_plus_results.pkl"
+        phago_prediction_results = f"{mid_dir}/" + ont + '_phago_base_results.pkl'
 
     elif plm_model_name=="esm2-33":
         dict_onyology_alpha = {"BP": 0.9, "CC": 0.62, "MF": 0.82}
-        output_results = "results//"+ont+ "_phago_large_plus_results.pkl"
-        phago_prediction_results = "results/" + ont + '_phago_large_results.pkl'
+        output_results = f"{mid_dir}/"+ont+ "_phago_large_plus_results.pkl"
+        phago_prediction_results = f"{mid_dir}/" + ont + '_phago_large_results.pkl'
     else:
         print("Error, please the correct plm model name!")
         exit(0)
@@ -306,7 +308,7 @@ def combine_diamondblasp_phaGO(plm_model_name,ont):
     alpha_parameter = dict_onyology_alpha[ont]
 
     # diamond_score_prediction_results.
-    diamond_blastp_result_file = "results//" + ont + '_test_diamondblastp_results.pkl'
+    diamond_blastp_result_file = f"{mid_dir}/" + ont + '_test_diamondblastp_results.pkl'
     test_df = pd.read_pickle(diamond_blastp_result_file)
     diamond_blastp_preds = test_df["prediction"]
     diamond_protein_name = test_df["protein_name"]
@@ -355,29 +357,31 @@ def combine_diamondblasp_phaGO(plm_model_name,ont):
 
     data = {}
 
-    data["proteins"] = proteins
+    data["protein_name"] = proteins
 
-    data["preds"] = all_phagoplus
+    data["prediction"] = all_phagoplus
 
     df = pd.DataFrame(data)
 
     df.to_pickle(output_results, protocol=4)
 
-def output_the_prediction_results(plm_model_name, ont):
+def output_the_prediction_results(plm_model_name, ont,mid_dir):
     #load the phago plus results
     # get cutoff for each go term
 
     if plm_model_name=="esm2-12":
 
-        phagoplus_prediction_results = "results//" + ont + "_phago_base_plus_results.pkl"
-        file1 = open("results/"+ont + "_GOPhage_base_plus_prediction_labels.csv", "w")
+        phagoplus_prediction_results = f"{mid_dir}/" + ont + "_phago_base_plus_results.pkl"
+        results_csv_name= f"{mid_dir}/"+ont + "_GOPhage_base_plus_prediction_labels.csv"
+        file1 = open(results_csv_name, "w")
         file2=open("./PhaGO_model/esm12_"+ont+"_label_threshold.csv")
         next(file2)
 
     elif plm_model_name=="esm2-33":
 
-        phagoplus_prediction_results = "results//" + ont + "_phago_large_plus_results.pkl"
-        file1 = open("results/"+ont + "_GOPhage_large_plus_prediction_labels.csv", "w")
+        phagoplus_prediction_results = f"{mid_dir}/" + ont + "_phago_large_plus_results.pkl"
+        results_csv_name=f"{mid_dir}/"+ont + "_GOPhage_large_plus_prediction_labels.csv"
+        file1 = open(results_csv_name, "w")
         file2 = open("./PhaGO_model/esm33_" + ont + "_label_threshold.csv")
         next(file2)
     else:
@@ -385,12 +389,9 @@ def output_the_prediction_results(plm_model_name, ont):
         exit(0)
 
 
-
-
     test_df = pd.read_pickle(phagoplus_prediction_results)
     phago_plus_preds = test_df["prediction"]
     phago_plus_protein = test_df["protein_name"]
-
 
     terms_file = "./Term_label/" + ont + '_term.pkl'
 
@@ -403,9 +404,6 @@ def output_the_prediction_results(plm_model_name, ont):
         line = lines.strip().split(",")
         dict_label_threshold[line[0]]=float(line[1])
 
-
-
-
     file1.write("Proteins,GO Term,Scores\n")
 
     for j in range(len(phago_plus_protein)):
@@ -417,6 +415,107 @@ def output_the_prediction_results(plm_model_name, ont):
                 file1.write(p+","+go_term+","+str(score)+"\n")
     file1.close()
 
+    return results_csv_name
+
+
+
+def parse_go_obo(go_obo_path):
+    """Parse go.obo file, keep id, name, namespace, is_a, part_of relations"""
+    GO_info = {}
+    current_id = None
+    with open(go_obo_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line == "[Term]":
+                current_id = None
+            elif line.startswith("id: GO:"):
+                current_id = line.split("id: ")[1]
+                GO_info[current_id] = {"name": "", "namespace": "", "parents": []}
+            elif current_id:
+                if line.startswith("name:"):
+                    GO_info[current_id]["name"] = line.split("name: ")[1]
+                elif line.startswith("namespace:"):
+                    GO_info[current_id]["namespace"] = line.split("namespace: ")[1]
+                elif line.startswith("is_a:"):
+                    GO_info[current_id]["parents"].append(line.split("is_a: ")[1].split()[0])
+                elif "relationship: part_of" in line:
+                    GO_info[current_id]["parents"].append(line.split("relationship: part_of ")[1].split()[0])
+    return GO_info
+
+def get_all_ancestors(go_id, GO_info):
+    """Recursively get all ancestors (is_a and part_of)"""
+    ancestors = set()
+    queue = deque(GO_info.get(go_id, {}).get("parents", []))
+    while queue:
+        parent = queue.popleft()
+        if parent not in ancestors:
+            ancestors.add(parent)
+            queue.extend(GO_info.get(parent, {}).get("parents", []))
+    return ancestors
+
+def expand_predictions(input_csv, cutoff=0.1,
+                       out_summary="GO_summary.csv"):
+
+    # 1. Parse GO file
+    GO_info = parse_go_obo("DataBase/go-basic.obo")
+
+    # 2. Read prediction csv & filter by cutoff
+    protein_to_go = defaultdict(list)
+    rows = []
+    with open(input_csv, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f, delimiter="\t" if "\t" in f.readline() else ",")
+        f.seek(0)
+        reader = csv.DictReader(f)
+        for row in reader:
+            score = float(row["Scores"])
+            if score >= cutoff:
+                protein = row["Proteins"]
+                go_id = row["GO Term"]
+                rows.append((protein, go_id, score))
+                protein_to_go[protein].append((go_id, score))
+
+    # 3. Generate long-format expanded records
+    expanded_rows = []
+    summary_rows = []
+
+    for protein, go_list in protein_to_go.items():
+        seen_terms = set()
+        all_terms = {}
+
+        # Include direct predictions
+        for go_id, score in go_list:
+            if go_id not in seen_terms:
+                info = GO_info.get(go_id, {"name": "", "namespace": ""})
+                expanded_rows.append([
+                    protein, go_id, info["name"], info["namespace"], score, go_id, info["name"], "self"
+                ])
+                seen_terms.add(go_id)
+                all_terms[go_id] = info["name"]
+
+            # Add ancestors
+            ancestors = get_all_ancestors(go_id, GO_info)
+            for anc_id in ancestors:
+                if anc_id not in seen_terms:
+                    info = GO_info.get(anc_id, {"name": "", "namespace": ""})
+                    expanded_rows.append([
+                        protein, go_id, GO_info.get(go_id, {}).get("name", ""),
+                        GO_info.get(go_id, {}).get("namespace", ""),
+                        score, anc_id, info["name"], "ancestor"
+                    ])
+                    seen_terms.add(anc_id)
+                    all_terms[anc_id] = info["name"]
+
+        # summary line
+        ancestor_summary = "; ".join([f"{k}: {v}" for k, v in all_terms.items()])
+        summary_rows.append([protein, ancestor_summary])
+
+
+    with open(out_summary, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Protein_ID", "GO_terms_and_Ancestors"])
+        writer.writerows(summary_rows)
+
+    print(f"✅ Summary file written to: {out_summary}")
 
 
 if __name__ == '__main__':
@@ -430,75 +529,61 @@ if __name__ == '__main__':
 
     # user input
     parser.add_argument('--contigs', help='DNA FASTA file of contigs, you can only input contigs and ignore the --proteins and --sentences', default=None)
-
-    parser.add_argument('--proteins', help='FASTA file of proteins, if you input the proteins, you also need to tell the proteins sentences', type=str, default=None)
-    parser.add_argument('--sentences',
-                        help='The contigs sentence including the ordered proteins. Please seperate each column with comma.',
-                        type=str,
-                        default=None)
-
-
     parser.add_argument('--plm', help='name of PLM model (esm2-12 or esm2-33)', type=str, default='esm2-12')
     parser.add_argument('--ont', help='The ontology including BP, CC and MF', type=str, default='CC')
     parser.add_argument('--batch_size', help="batch size", type=int, default=8)
+    parser.add_argument('--mid_dir', help="The directory for saved results", type=str, default="CC_results")
+    parser.add_argument('--threshold', help="The GO statisfy the threshold will be output", type=float, default=0.1)
 
 
     inputs = parser.parse_args()
 
     contig_fasta = inputs.contigs
-    protein_fasta = inputs.proteins
-    contig_sentence = inputs.sentences
-
     plm_model = inputs.plm
     ont = inputs.ont
     batch_size = inputs.batch_size
+    mid_dir = inputs.mid_dir
 
-    if not os.path.exists("results/"):
-        os.makedirs("results/")
+    if not os.path.exists(f"{mid_dir}"):
+        os.makedirs(f"{mid_dir}")
 
     #Preprocess the contigs and generate the contig sentences.
 
     if contig_fasta != None:
-        #check existing of the translated proteins
-        protein_fasta = contig_fasta.split(".")[0]
-        protein_fasta = protein_fasta + ".fa"
-
-        if os.path.isfile(protein_fasta):
-            print("The contig have been translated")
-        else:
-            protein_fasta,contig_sentence = translate_contigs_into_proteins(input_fasta=contig_fasta)
-
-        run_diamond_blatp_alignment(input_protein_fasta=protein_fasta,ont=ont)
-
-
-    elif protein_fasta != None and contig_sentence != None:
-        run_diamond_blatp_alignment(input_protein_fasta=protein_fasta,ont=ont)
+        protein_fasta = f"{mid_dir}/test_protein.fa"
+        protein_fasta,contig_sentence = translate_contigs_into_proteins(input_fasta=contig_fasta,                                                                    output_protein=protein_fasta,mid_dir=mid_dir)
+        run_diamond_blatp_alignment(input_protein_fasta=protein_fasta,ont=ont,mid_dir=mid_dir)
     else:
         print("There is an error in your input!")
         exit(0)
 
 
-    # Align withe database and get the diamond score results.
-    get_diamondscore(ont=ont, protein_fasta=protein_fasta)
+    # Align with database and get the diamond score results.
+    get_diamondscore(ont=ont, protein_fasta=protein_fasta,mid_dir=mid_dir)
 
     # Input protein into ESM model and get the embedding
-    embedding_proteins_ESM2(plm_model_name=plm_model, fasta_file=protein_fasta)
+    embedding_proteins_ESM2(plm_model_name=plm_model,mid_dir=mid_dir)
 
     # Preparing the input files for GOPhage model including the protein names and the sequence embedding.
-    contig_sentence = check_number_protein(contig_sentence=contig_sentence, ont=ont)
+    contig_sentence = check_number_protein(contig_sentence=contig_sentence, ont=ont,mid_dir=mid_dir)
 
     preparing_context_protein_embedding(plm_model_name=plm_model,contig_sentence=contig_sentence)
     get_protein_names(contig_sentence=contig_sentence)
-    get_sequence_location(model_name=plm_model,contig_sentence=contig_sentence)
+    get_sequence_location(model_name=plm_model,contig_sentence=contig_sentence,mid_dir=mid_dir)
 
     # run our model
-    run_phaGO_model(plm_model_name=plm_model,ont=ont,batch_size= batch_size)
+    run_phaGO_model(plm_model_name=plm_model,ont=ont,batch_size= batch_size,mid_dir=mid_dir)
 
     # combine with the diamondscore
     combine_diamondblasp_phaGO(plm_model_name=plm_model,ont=ont)
 
     # output the final results
-    output_the_prediction_results(ont=ont,plm_model_name=plm_model)
+    results_csv_name= output_the_prediction_results(ont=ont,plm_model_name=plm_model,mid_dir=mid_dir)
+
+    summary_name = results_csv_name.split(".csv")[0]+"_summary.csv"
+
+    expand_predictions(results_csv_name, cutoff=0.1,out_summary=summary_name)
+
     end_time = time.time()
     spend_time = (end_time - start_time)/60
     print(f"Running time: {spend_time:.2f} min")
